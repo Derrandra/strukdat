@@ -1,6 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+struct Tiket {
+    int id;
+    string nama;
+    string deskripsi;
+    string status;
+    int prioritas;
+};
+
 int main(){
     int n;
 
