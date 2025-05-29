@@ -76,16 +76,28 @@ void viewQueue()
         return;
     }
 
-    queue<Tiket> q = antreanTiket;
-    cout << "Antrean Tiket:\n";
+    // Ambil isi antrean ke vector
+    vector<Tiket> temp;
+    queue<Tiket> q = antreanTiket; // salin antrean asli
+
     while (!q.empty())
     {
-        Tiket t = q.front();
+        temp.push_back(q.front());
         q.pop();
+    }
+
+    // Urutkan berdasarkan prioritas (1=tinggi, 2=sedang, 3= rendah)
+    sort(temp.begin(), temp.end(), [](const Tiket &a, const Tiket &b)
+         { return a.prioritas < b.prioritas; });
+
+    cout << "Antrean Tiket (urut berdasarkan prioritas):\n";
+    for (const auto &t : temp)
+    {
         cout << "ID: " << t.id << ", Nama: " << t.nama
              << ", Prioritas: " << t.prioritas << endl;
     }
 }
+
 
 // Menampilkan tiket selesai (stack)
 void viewClosedTickets()
@@ -116,8 +128,21 @@ void resolveTicket()
         return;
     }
 
-    Tiket t = antreanTiket.front();
-    antreanTiket.pop();
+    // Pindahkan antrean ke vector untuk sorting
+    vector<Tiket> temp;
+    while (!antreanTiket.empty())
+    {
+        temp.push_back(antreanTiket.front());
+        antreanTiket.pop();
+    }
+
+    // Urutkan berdasarkan prioritas
+    sort(temp.begin(), temp.end(), [](const Tiket &a, const Tiket &b)
+         { return a.prioritas < b.prioritas; });
+
+    // Ambil tiket dengan prioritas tertinggi (index 0)
+    Tiket t = temp.front();
+    temp.erase(temp.begin());
 
     cout << "Menyelesaikan tiket ID: " << t.id << ", Nama: " << t.nama << endl;
     cout << "Kategori masalah: " << t.masalah << endl;
@@ -139,8 +164,14 @@ void resolveTicket()
     }
 
     tiketSelesai.push(t);
+
+    // Masukkan kembali sisa tiket ke antreanTiket
+    for (const auto &tk : temp)
+        antreanTiket.push(tk);
+
     cout << "Tiket berhasil diselesaikan.\n";
 }
+
 
 // Menghapus tiket berdasarkan ID
 void deleteTicketById()
@@ -164,28 +195,6 @@ void deleteTicketById()
     }
 
     // Tidak menghapus dari queue/stack karena non-trivial dalam queue/stack
-}
-
-// Sortir tiket berdasarkan prioritas
-void sortTicketsByPriority()
-{
-    if (semuaTiket.empty())
-    {
-        cout << "Tidak ada tiket untuk disortir.\n";
-        return;
-    }
-
-    vector<Tiket> copy = semuaTiket;
-    sort(copy.begin(), copy.end(), [](const Tiket &a, const Tiket &b)
-         { return a.prioritas < b.prioritas; });
-
-    cout << "Tiket disortir berdasarkan prioritas:\n";
-    for (const auto &t : copy)
-    {
-        cout << "ID: " << t.id << ", Nama: " << t.nama
-             << ", Prioritas: " << t.prioritas
-             << ", Status: " << t.status << endl;
-    }
 }
 
 // Menghadapi case sensitive
@@ -314,9 +323,8 @@ int main()
         cout << "4. Lihat Tiket Selesai\n";
         cout << "5. Selesaikan Tiket\n";
         cout << "6. Hapus Tiket\n";
-        cout << "7. Sortir tiket berdasarkan prioritas\n";
-        cout << "8. Cari Tiket\n";
-        cout << "9. Tampilkan Tiket berdasarkan Status\n";
+        cout << "7. Cari Tiket\n";
+        cout << "8. Tampilkan Tiket berdasarkan Status\n";
         cout << "0. Keluar\n";
         cout << "Pilih: ";
         cin >> n;
@@ -342,12 +350,9 @@ int main()
             deleteTicketById();
             break;
         case 7:
-            sortTicketsByPriority();
-            break;
-        case 8:
             searchTicket();
             break;
-        case 9:
+        case 8:
             filterTicketsByStatus();
             break;
         case 0:
