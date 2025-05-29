@@ -9,6 +9,7 @@ struct Tiket
     string deskripsi;
     string status; // "open" atau "closed"
     int prioritas; // 1 = tinggi, 2 = sedang, 3 = rendah
+    string masalah;
     string solusi;
 };
 
@@ -36,6 +37,8 @@ void createTicket()
     getline(cin, t.nama);
     cout << "Masukkan deskripsi masalah: ";
     getline(cin, t.deskripsi);
+    cout << "Masukkan masalah Anda (penjelasan lebih lanjut, isi '-' jika tidak ada): \n";
+    getline(cin, t.masalah);
     cout << "Masukkan tingkat prioritas (1 = tinggi, 2 = sedang, 3 = rendah): ";
     cin >> t.prioritas;
     t.status = "open";
@@ -117,6 +120,7 @@ void resolveTicket()
     antreanTiket.pop();
 
     cout << "Menyelesaikan tiket ID: " << t.id << ", Nama: " << t.nama << endl;
+    cout << "Kategori masalah: " << t.masalah << endl;
     cout << "Masukkan solusi: ";
     cin.ignore();
     getline(cin, t.solusi);
@@ -222,6 +226,7 @@ void searchTicket()
                 cout << "\nTiket ditemukan:\n";
                 cout << "ID: " << t.id << "\nNama: " << t.nama
                      << "\nDeskripsi: " << t.deskripsi
+                     << "\nMasalah: " << t.masalah
                      << "\nPrioritas: " << t.prioritas
                      << "\nStatus: " << t.status
                      << "\nSolusi: " << t.solusi << endl;
@@ -247,6 +252,7 @@ void searchTicket()
                 cout << "\nTiket ditemukan:\n";
                 cout << "ID: " << t.id << "\nNama: " << t.nama
                      << "\nDeskripsi: " << t.deskripsi
+                     << "\nMasalah: " << t.masalah
                      << "\nPrioritas: " << t.prioritas
                      << "\nStatus: " << t.status
                      << "\nSolusi: " << t.solusi << endl;
