@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <ctime>
+#include <fstream>
 using namespace std;
 
 struct Tiket
@@ -308,9 +309,75 @@ void filterTicketsByStatus()
     }
 }
 
+// Menyimpan semuaTiket ke file CSV
+void saveToFile(const string &filename = "listTiket.csv")
+{
+    ofstream file(filename);
+    if (!file.is_open())
+    {
+        cerr << "Gagal membuka file untuk menyimpan.\n";
+        return;
+    }
+
+    // Header CSV
+    file << "ID,Nama,Deskripsi,Masalah,Solusi,Status,Prioritas\n";
+
+    for (const auto &t : semuaTiket)
+    {
+        file << t.id << "," << t.nama << "," << t.deskripsi << "," << t.masalah << ","
+             << t.solusi << "," << t.status << "," << t.prioritas << "\n";
+    }
+
+    file.close();
+    cout << "Data berhasil disimpan ke listTiket.csv\n";
+}
+
+// Membaca semuaTiket dari file CSV
+void loadFromFile(const string &filename = "listTiket.csv")
+{
+    ifstream file(filename);
+    if (!file.is_open())
+    {
+        cerr << "File tidak ditemukan, mulai dengan data kosong.\n";
+        return;
+    }
+
+    semuaTiket.clear(); // bersihkan isi sebelumnya
+
+    string line;
+    getline(file, line); // skip header
+
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        Tiket t;
+        string prioritasStr;
+
+        getline(ss, t.id, ',');
+        getline(ss, t.nama, ',');
+        getline(ss, t.deskripsi, ',');
+        getline(ss, t.masalah, ',');
+        getline(ss, t.solusi, ',');
+        getline(ss, t.status, ',');
+        getline(ss, prioritasStr, ',');
+
+        t.prioritas = stoi(prioritasStr);
+
+        semuaTiket.push_back(t);
+        if (t.status == "open")
+            antreanTiket.push(t);
+        else if (t.status == "closed")
+            tiketSelesai.push(t);
+    }
+
+    file.close();
+    cout << "Data berhasil dimuat dari listTiket.csv\n";
+}
+
 // Menu utama
 int main()
 {
+    loadFromFile(); 
     int n;
 
     do
@@ -356,6 +423,7 @@ int main()
             filterTicketsByStatus();
             break;
         case 0:
+            saveToFile();
             cout << "Keluar dari program\n";
             break;
         default:
